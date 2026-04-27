@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
@@ -16,6 +17,8 @@ export function GoalItem({ goal, date }: any) {
 
   const isDone =
     goal.completedTimes.length === goal.times.length;
+
+    const isFuture = dayjs(date).isAfter(dayjs(), 'day');
 
   // ✅ выполнение
   const mark = useMutation({
@@ -94,19 +97,16 @@ const deleteGoal = useMutation({
 
           return (
             <button
-              key={t}
-              onClick={() =>
-                done ? unmark.mutate(t) : mark.mutate(t)
-              }
-              className={`px-3 py-1 rounded border text-sm transition
-                ${
-                  done
-                    ? 'bg-green-500 text-white border-green-500'
-                    : 'hover:bg-gray-100'
+                disabled={isFuture}
+                onClick={() =>
+                    done ? unmark.mutate(t) : mark.mutate(t)
                 }
-              `}
-            >
-              {labels[t]}
+                className={`px-3 py-1 rounded border text-sm transition
+                    ${done ? 'bg-green-500 text-white' : ''}
+                    ${isFuture ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}
+                `}
+                >
+                {labels[t]}
             </button>
           );
         })}
