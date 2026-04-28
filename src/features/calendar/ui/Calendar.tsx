@@ -1,20 +1,27 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import dayjs from 'dayjs';
+
+type DayData = {
+  total: number;
+  done: number;
+  percent: number;
+};
 
 export function Calendar({
   data,
   selected,
   onSelect,
 }: {
-  data: Record<string, any>;
+  data: Record<string, DayData>;
   selected: string;
   onSelect: (d: string) => void;
 }) {
   const now = dayjs();
   const start = now.startOf('month');
   const end = now.endOf('month');
+
+  const today = dayjs().format('YYYY-MM-DD');
 
   const days = [];
   let current = start;
@@ -23,17 +30,22 @@ export function Calendar({
     const key = current.format('YYYY-MM-DD');
     const day = data?.[key];
 
-    const percent = day?.percent || 0;
-    const hasData = day && (day.total > 0 || day.done > 0);
-
     const isSelected = key === selected;
-    const isToday = key === dayjs().format('YYYY-MM-DD');
+    const isToday = key === today;
+
+    let icon = null;
+
+    if (day?.total > 0) {
+      if (day.done === day.total) icon = '✅';
+      else if (key < today) icon = '❌';
+      else icon = '🎯';
+    }
 
     days.push(
       <div
         key={key}
         onClick={() => onSelect(key)}
-        className={`h-24 p-2 rounded-xl cursor-pointer border flex flex-col justify-between
+        className={`h-24 p-2 rounded-xl border cursor-pointer flex flex-col justify-between
           ${isSelected ? 'bg-green-100 border-green-600' : 'bg-white'}
           ${isToday ? 'ring-2 ring-blue-400' : ''}
           hover:shadow-sm transition
@@ -43,24 +55,20 @@ export function Calendar({
           <span className="text-sm font-medium">
             {current.date()}
           </span>
-
-          {hasData && (
-            <div className="w-2 h-2 bg-green-500 rounded-full" />
-          )}
+          <span>{icon}</span>
         </div>
 
-        <div className="mt-2">
-          <div className="h-1 bg-gray-200 rounded">
-            <div
-              className="h-full bg-green-500 rounded"
-              style={{ width: `${percent}%` }}
-            />
+        {/* мини-прогресс */}
+        {day?.total > 0 && (
+          <div className="mt-2">
+            <div className="h-1 bg-gray-200 rounded">
+              <div
+                className="h-full bg-green-500 rounded"
+                style={{ width: `${day.percent}%` }}
+              />
+            </div>
           </div>
-
-          <div className="text-xs text-gray-500 mt-1">
-            {Math.round(percent)}%
-          </div>
-        </div>
+        )}
       </div>
     );
 
