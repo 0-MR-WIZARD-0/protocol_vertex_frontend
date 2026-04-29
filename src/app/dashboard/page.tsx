@@ -11,11 +11,10 @@ import { ActionTabs } from '../../features/actions/ui/ActionTabs';
 
 export default function Dashboard() {
   const today = dayjs().format('YYYY-MM-DD');
-
   const [selected, setSelected] = useState<string>(today);
 
   const { data: monthData, isLoading: monthLoading } = useQuery({
-    queryKey: ['month', dayjs().month()],
+    queryKey: ['month', dayjs().year(), dayjs().month()],
     queryFn: () =>
       api
         .get('/calendar/month', {
@@ -46,7 +45,7 @@ export default function Dashboard() {
       <Calendar
         data={monthData?.days || {}}
         selected={selected}
-        onSelect={(d) => setSelected(d)}
+        onSelect={setSelected}
       />
 
       {dayLoading ? (

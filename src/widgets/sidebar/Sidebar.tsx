@@ -20,12 +20,11 @@ export function Sidebar() {
   return (
     <div className="w-64 bg-white border-r p-4">
       <h1 className="text-xl mb-6 font-bold">Vertex</h1>
-
       <div className="space-y-2">
         {item('/dashboard', 'Главная')}
-        {item('/analytics', 'Аналитика')}
+        {/* {item('/analytics', 'Аналитика')}
         {item('/appeals', 'Обжалования')}
-        {item('/admin', 'Админка')}
+        {item('/admin', 'Админка')} */}
       </div>
     </div>
   );

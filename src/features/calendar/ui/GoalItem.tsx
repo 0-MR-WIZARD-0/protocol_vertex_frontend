@@ -6,61 +6,52 @@ import { api } from '../../../shared/api/axios';
 import dayjs from 'dayjs';
 
 export function GoalItem({ goal, date }: any) {
-
-  console.log('FRONT TOTAL', goal.total);
   const qc = useQueryClient();
 
   const today = dayjs().format('YYYY-MM-DD');
   const isFuture = date > today;
+  const isFailed = goal?.isFailed;
 
-  // ✅ SAFE
   const slots = goal?.slots || [];
   const completedSlots = goal?.completedSlots || [];
 
   const day = goal?.day ?? { total: 0, done: 0, percent: 0 };
   const total = goal?.total ?? { total: 0, done: 0, percent: 0 };
 
-  // ✅ сортировка
-  const getTimeValue = (s: string) => {
-    if (s === 'morning') return 6;
-    if (s === 'day') return 12;
-    if (s === 'evening') return 18;
+  const sortedSlots = [...slots].sort((a, b) => {
+    const get = (s: string) => {
+      if (s === 'morning') return 6;
+      if (s === 'day') return 12;
+      if (s === 'evening') return 18;
 
-    if (/^\d{2}:\d{2}$/.test(s)) {
-      const [h, m] = s.split(':').map(Number);
-      return h + m / 60;
-    }
+      if (/^\d{2}:\d{2}$/.test(s)) {
+        const [h, m] = s.split(':').map(Number);
+        return h + m / 60;
+      }
 
-    if (/^\d{2}:\d{2}-\d{2}:\d{2}$/.test(s)) {
-      const [start] = s.split('-');
-      const [h, m] = start.split(':').map(Number);
-      return h + m / 60;
-    }
+      if (/^\d{2}:\d{2}-\d{2}:\d{2}$/.test(s)) {
+        const [start] = s.split('-');
+        const [h, m] = start.split(':').map(Number);
+        return h + m / 60;
+      }
 
-    return 999;
+      return 999;
+    };
+
+    return get(a) - get(b);
+  });
+
+  const refresh = () => {
+    qc.invalidateQueries({ queryKey: ['day'] });
+    qc.invalidateQueries({ queryKey: ['month'] });
   };
 
-  const sortedSlots = [...slots].sort(
-    (a, b) => getTimeValue(a) - getTimeValue(b),
-  );
-
-  const isDayDone = day.total > 0 && day.done === day.total;
-
-  // 🔥 ОБНОВЛЕНИЕ ДАННЫХ (ключевой фикс)
-  const refresh = async () => {
-    await qc.refetchQueries({ queryKey: ['day', date] });
-    await qc.refetchQueries({ queryKey: ['month'] });
-  };
-
-  // 🔥 MARK
   const mark = useMutation({
     mutationFn: (slot: string) =>
       api.post(`/goals/${goal.id}/mark`, { date, timeSlot: slot }),
-
     onSuccess: refresh,
   });
 
-  // 🔐 UNMARK
   const unmark = useMutation({
     mutationFn: async (slot: string) => {
       const password = prompt('Введите пароль');
@@ -72,122 +63,107 @@ export function GoalItem({ goal, date }: any) {
         password,
       });
     },
-
     onSuccess: refresh,
   });
 
-  // ❌ DELETE
   const deleteGoal = useMutation({
     mutationFn: (password: string) =>
       api.post(`/goals/${goal.id}/delete-request`, { password }),
-
     onSuccess: refresh,
   });
 
-  const daysLeft = Math.max(
-    0,
-    dayjs(goal.deadline).endOf('day').diff(dayjs(date), 'day'),
-  );
-
-  const getLabel = (slot: string) => {
-    if (slot === 'morning') return 'Утро ☀️';
-    if (slot === 'day') return 'День 🌤️';
-    if (slot === 'evening') return 'Вечер 🌙';
-    return slot;
-  };
-
   return (
     <div className="bg-white p-4 rounded-xl shadow space-y-4">
-      
-      {/* HEADER */}
       <div className="flex justify-between items-center">
-        <div className="font-medium">{goal.title}</div>
+        <div>
+          <h3>Цель: {goal.title}</h3> 
+          {goal.description && (
+            <p>Описание: {goal.description}</p>
+          )}
+        </div>
 
-        <button
-          onClick={() => {
-            const password = prompt('Введите пароль для удаления');
-            if (!password) return;
-            deleteGoal.mutate(password);
-          }}
-          className="text-red-500 text-xs hover:underline"
-        >
-          удалить
-        </button>
+        <div className="flex gap-2">
+          {isFailed && (
+            <button
+              className="text-yellow-600 text-xs"
+              onClick={() => alert('Обжалование отправлено')}
+            >
+              обжаловать
+            </button>
+          )}
+
+          <button
+            onClick={() => {
+              const password = prompt('Введите пароль');
+              if (!password) return;
+              deleteGoal.mutate(password);
+            }}
+            className="text-red-500 text-xs"
+          >
+            ❌
+          </button>
+        </div>
       </div>
 
-      {/* СЛОТЫ */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex gap-2 flex-wrap">
         {sortedSlots.map((slot) => {
           const done = completedSlots.includes(slot);
 
           return (
             <button
               key={slot}
-              disabled={isFuture}
+              disabled={isFuture || isFailed}
               onClick={() =>
                 done ? unmark.mutate(slot) : mark.mutate(slot)
               }
-              className={`px-3 py-1 rounded border text-sm
-                ${done ? 'bg-green-500 text-white border-green-500' : ''}
+              className={`px-3 py-1 border rounded text-sm
+                ${done ? 'bg-green-500 text-white' : ''}
                 ${
-                  isFuture
+                  isFuture || isFailed
                     ? 'opacity-40 cursor-not-allowed'
-                    : 'hover:bg-gray-100'
+                    : ''
                 }
               `}
             >
-              {getLabel(slot)}
+              {slot}
             </button>
           );
         })}
       </div>
 
-      {/* 🔵 ПРОГРЕСС ЗА ДЕНЬ */}
+      {isFailed && (
+        <div className="text-red-500 text-sm">Цель провалена ❌</div>
+      )}
+
       <div>
         <div className="text-xs text-gray-400 mb-1">
           Прогресс за день
         </div>
-
         <div className="h-2 bg-gray-200 rounded">
           <div
-            className="h-full bg-blue-500 rounded transition-all"
+            className="h-full bg-blue-500"
             style={{ width: `${day.percent}%` }}
           />
         </div>
-
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs">
           {day.done}/{day.total} ({day.percent}%)
         </div>
       </div>
 
-      {/* 🟢 ОБЩИЙ ПРОГРЕСС */}
       <div>
         <div className="text-xs text-gray-400 mb-1">
           Общий прогресс цели
         </div>
-
         <div className="h-2 bg-gray-200 rounded">
           <div
-            className="h-full bg-green-500 rounded transition-all"
+            className="h-full bg-green-500"
             style={{ width: `${total.percent}%` }}
           />
         </div>
-
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-xs">
           {total.done}/{total.total} ({total.percent}%)
         </div>
       </div>
-
-      {/* STATUS */}
-      {isDayDone ? (
-        <div className="text-green-600 text-sm">
-          Выполнено за день ✅
-        </div>
-      ) : (
-        <div className="text-gray-500 text-sm">
-          До завершения: {daysLeft} дней
-        </div>
-      )}
     </div>
   );
 }

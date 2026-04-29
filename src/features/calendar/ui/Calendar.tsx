@@ -6,6 +6,7 @@ type DayData = {
   total: number;
   done: number;
   percent: number;
+  hasTasks?: boolean;
 };
 
 export function Calendar({
@@ -41,6 +42,10 @@ export function Calendar({
       else icon = '🎯';
     }
 
+    if (day?.hasTasks) {
+      icon = icon ? `${icon} 📑` : '📑';
+    }
+
     days.push(
       <div
         key={key}
@@ -58,7 +63,6 @@ export function Calendar({
           <span>{icon}</span>
         </div>
 
-        {/* мини-прогресс */}
         {day?.total > 0 && (
           <div className="mt-2">
             <div className="h-1 bg-gray-200 rounded">

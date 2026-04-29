@@ -79,7 +79,6 @@ export function CreateGoalModal({ onClose }: { onClose: () => void }) {
       return;
     }
 
-    // 🔥 если нет слотов → обычная цель
     const finalSlots = slots.length > 0 ? slots : ['day'];
 
     try {
@@ -155,7 +154,6 @@ export function CreateGoalModal({ onClose }: { onClose: () => void }) {
           <option value="WEEKENDS">Выходные</option>
         </select>
 
-        {/* SLOT UI */}
         <div className="space-y-2">
           <div className="text-sm font-medium">Когда выполнять</div>
 
@@ -200,7 +198,7 @@ export function CreateGoalModal({ onClose }: { onClose: () => void }) {
             checked={isDream}
             onChange={(e) => setIsDream(e.target.checked)}
           />
-          Требует подтверждения
+          Осуществить мечту (требует модерации)
         </label>
 
         <div className="flex justify-end gap-2">

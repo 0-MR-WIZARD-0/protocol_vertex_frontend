@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { CreateGoalModal } from '../../../features/goals/ui/CreateGoalModal';
+import { CreateTaskModal } from '../../tasks/ui/CreateTaskModal';
 
 export function ActionTabs() {
   const [open, setOpen] = useState<null | 'goal' | 'task' | 'reminder'>(null);
@@ -25,6 +26,10 @@ export function ActionTabs() {
 
       {open === 'goal' && (
         <CreateGoalModal onClose={() => setOpen(null)} />
+      )}
+
+      {open === 'task' && (
+        <CreateTaskModal onClose={() => setOpen(null)} />
       )}
     </>
   );
