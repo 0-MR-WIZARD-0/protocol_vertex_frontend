@@ -49,7 +49,7 @@ export function GoalItem({ goal, date }: any) {
   const mark = useMutation({
     mutationFn: (slot: string) =>
       api.post(`/goals/${goal.id}/mark`, { date, timeSlot: slot }),
-    onSuccess: refresh,
+      onSuccess: refresh,
   });
 
   const unmark = useMutation({
@@ -79,6 +79,13 @@ export function GoalItem({ goal, date }: any) {
           <h3>Цель: {goal.title}</h3> 
           {goal.description && (
             <p>Описание: {goal.description}</p>
+          )}
+          {goal.dream && (
+            <div className="mt-2 p-2 bg-purple-50 rounded">
+              <div className="text-sm font-medium">
+                Мечта 🌟: <a href={goal.dream.description}>{goal.dream.title}</a>
+              </div>
+            </div>
           )}
         </div>
 

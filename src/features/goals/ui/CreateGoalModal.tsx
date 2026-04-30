@@ -20,6 +20,9 @@ export function CreateGoalModal({ onClose }: { onClose: () => void }) {
   const [customTime, setCustomTime] = useState('');
   const [interval, setIntervalValue] = useState('');
 
+  const [dreamTitle, setDreamTitle] = useState('');
+  const [dreamDescription, setDreamDescription] = useState('');
+
   const [loading, setLoading] = useState(false);
 
   const addSlot = (slot: string) => {
@@ -79,6 +82,11 @@ export function CreateGoalModal({ onClose }: { onClose: () => void }) {
       return;
     }
 
+    if (isDream && (!dreamTitle || !dreamDescription)) {
+      alert('Заполни поля мечты');
+      return;
+    }
+
     const finalSlots = slots.length > 0 ? slots : ['day'];
 
     try {
@@ -93,6 +101,8 @@ export function CreateGoalModal({ onClose }: { onClose: () => void }) {
         repeatDays: [],
         slots: finalSlots,
         isDream,
+        dreamTitle,
+        dreamDescription
       });
 
       qc.invalidateQueries({ queryKey: ['day'] });
@@ -200,6 +210,24 @@ export function CreateGoalModal({ onClose }: { onClose: () => void }) {
           />
           Осуществить мечту (требует модерации)
         </label>
+
+        {isDream && (
+          <div className="space-y-2">
+            <input
+              className="w-full border p-2 rounded"
+              placeholder="Название мечты"
+              value={dreamTitle}
+              onChange={(e) => setDreamTitle(e.target.value)}
+            />
+
+            <textarea
+              className="w-full border p-2 rounded"
+              placeholder="Описание / ссылка"
+              value={dreamDescription}
+              onChange={(e) => setDreamDescription(e.target.value)}
+            />
+          </div>
+        )}
 
         <div className="flex justify-end gap-2">
           <button onClick={onClose}>Отмена</button>
