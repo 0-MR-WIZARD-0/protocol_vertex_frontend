@@ -42,7 +42,7 @@ export function GoalItem({ goal, date }: any) {
   });
 
   const refresh = () => {
-    qc.invalidateQueries({ queryKey: ['day'] });
+    qc.invalidateQueries({ queryKey: ['day', date] });
     qc.invalidateQueries({ queryKey: ['month'] });
   };
 
@@ -73,7 +73,7 @@ export function GoalItem({ goal, date }: any) {
   });
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow space-y-4">
+    <div className="border p-4 rounded-xl shadow space-y-4">
       <div className="flex justify-between items-center">
         <div>
           <h3>Цель: {goal.title}</h3> 
@@ -81,7 +81,7 @@ export function GoalItem({ goal, date }: any) {
             <p>Описание: {goal.description}</p>
           )}
           {goal.dream && (
-            <div className="mt-2 p-2 bg-purple-50 rounded">
+            <div className="mt-2 p-2 border rounded">
               <div className="text-sm font-medium">
                 Мечта 🌟: <a href={goal.dream.description}>{goal.dream.title}</a>
               </div>
@@ -139,7 +139,7 @@ export function GoalItem({ goal, date }: any) {
       </div>
 
       {isFailed && (
-        <div className="text-red-500 text-sm">Цель провалена ❌</div>
+        <div className="text-red">Цель провалена ❌</div>
       )}
 
       <div>

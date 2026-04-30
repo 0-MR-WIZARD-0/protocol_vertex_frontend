@@ -43,7 +43,7 @@ export function CreateTaskModal({ onClose }: any) {
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-xl w-[400px] space-y-4">
+      <div className="bg-white p-6 rounded-xl w-[400px] space-y-4 text-black">
         <h2>Создать задачу</h2>
 
         <input

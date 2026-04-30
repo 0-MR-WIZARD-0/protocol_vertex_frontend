@@ -11,7 +11,6 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
 
   const [error, setError] = useState('');
 
@@ -39,7 +38,6 @@ export default function LoginPage() {
       await api.post('/auth/register', {
         email,
         password,
-        name,
       });
 
       await handleLogin();
@@ -52,7 +50,7 @@ export default function LoginPage() {
     <div className="h-screen flex items-center justify-center">
       <div className="p-6 bg-white rounded-2xl shadow w-80 space-y-4">
 
-        <div className="flex border rounded-lg overflow-hidden">
+        <div className="flex border rounded-lg overflow-hidden text-black">
           <button
             onClick={() => setTab('login')}
             className={`flex-1 py-2 text-sm ${
@@ -76,28 +74,15 @@ export default function LoginPage() {
           </button>
         </div>
 
-        <h1 className="text-lg font-medium text-center">
-          {tab === 'login' ? 'Вход' : 'Регистрация'}
-        </h1>
-
-        {tab === 'register' && (
-          <input
-            className="w-full p-2 border rounded"
-            placeholder="Имя"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        )}
-
         <input
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-black"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
-          className="w-full p-2 border rounded"
+          className="w-full p-2 border rounded text-black"
           type="password"
           placeholder="Пароль"
           value={password}
@@ -112,7 +97,7 @@ export default function LoginPage() {
 
         <button
           onClick={tab === 'login' ? handleLogin : handleRegister}
-          className="w-full bg-green-600 text-white p-2 rounded hover:opacity-90"
+          className="w-full bg-green-600 p-2 rounded hover:opacity-90"
         >
           {tab === 'login' ? 'Войти' : 'Зарегистрироваться'}
         </button>

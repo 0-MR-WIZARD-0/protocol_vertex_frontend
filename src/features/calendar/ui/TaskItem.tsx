@@ -37,7 +37,7 @@ export function TaskItem({ task, date }: any) {
   });
 
   return (
-    <div className="bg-white p-3 rounded-xl shadow flex justify-between items-center">
+    <div className="border p-3 rounded-xl shadow flex justify-between items-center">
 
       <div className="flex items-center gap-3">
         <button
@@ -52,13 +52,13 @@ export function TaskItem({ task, date }: any) {
         </button>
 
         <div>
-          <div className={`font-medium ${task.isDone ? 'line-through text-gray-400' : ''}`}>
-            {task.title}
+          <div className={`font-medium ${task.isDone ? 'line-through' : ''}`}>
+            Задача: {task.title}
           </div>
 
           {task.description && (
-            <div className="text-xs text-gray-500">
-              {task.description}
+            <div className={`text-xs ${task.isDone ? 'line-through' : ''}`}>
+              Описание: {task.description}
             </div>
           )}
         </div>

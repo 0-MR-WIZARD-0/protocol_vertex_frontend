@@ -17,11 +17,11 @@ export function Header() {
   };
 
   return (
-    <div className="h-14 border-b bg-white flex items-center justify-between px-6">
+    <div className="h-14 border-b flex items-center justify-between px-6">
       <h3>Роль: {user?.role}</h3>
 
       <div className="flex items-center gap-4">
-        <p className="text-sm text-gray-600">{user?.email}</p>
+        <p className="text-sm">{user?.email}</p>
 
         <button
           onClick={handleLogout}

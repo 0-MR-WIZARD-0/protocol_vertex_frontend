@@ -7,14 +7,25 @@ import { CreateTaskModal } from '../../tasks/ui/CreateTaskModal';
 export function ActionTabs() {
   const [open, setOpen] = useState<null | 'goal' | 'task' | 'reminder'>(null);
 
-  const tab = (type: typeof open, label: string) => (
-    <button
-      onClick={() => setOpen(type)}
-      className="px-4 py-2 bg-white border rounded-lg hover:bg-gray-100"
-    >
-      {label}
-    </button>
-  );
+  const tab = (type: typeof open, label: string) => {
+    const isActive = open === type;
+
+    return (
+      <button
+        onClick={() => setOpen(type)}
+        className={`
+          px-4 py-2 rounded-lg border transition
+
+          ${isActive
+            ? 'bg-green-600 text-white border-green-600'
+            : 'text-white border hover:bg-green-500 hover:text-black'
+          }
+        `}
+      >
+        {label}
+      </button>
+    );
+  };
 
   return (
     <>
