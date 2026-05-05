@@ -4,13 +4,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../shared/api/axios';
 import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
 
 export function GoalItem({ goal, date }: any) {
+
+  const router = useRouter();
+
   const qc = useQueryClient();
 
   const today = dayjs().format('YYYY-MM-DD');
+
   const isFuture = date > today;
   const isFailed = goal?.isFailed;
+
+  const isApproved = goal?.status === 'APPROVED';
 
   const slots = goal?.slots || [];
   const completedSlots = goal?.completedSlots || [];
@@ -49,7 +56,7 @@ export function GoalItem({ goal, date }: any) {
   const mark = useMutation({
     mutationFn: (slot: string) =>
       api.post(`/goals/${goal.id}/mark`, { date, timeSlot: slot }),
-      onSuccess: refresh,
+    onSuccess: refresh,
   });
 
   const unmark = useMutation({
@@ -72,18 +79,34 @@ export function GoalItem({ goal, date }: any) {
     onSuccess: refresh,
   });
 
+  const CreateAppeals = () => {
+      router.push(`/appeals?goalId=${goal.id}&date=${date}`);
+  }
+
+  if (!isApproved) return null;
+
   return (
-    <div className="border p-4 rounded-xl shadow space-y-4">
+    <div className="border p-4 rounded-xl shadow space-y-4 text-white">
+
       <div className="flex justify-between items-center">
         <div>
-          <h3>Цель: {goal.title}</h3> 
+          <h3>Цель: {goal.title}</h3>
+
           {goal.description && (
             <p>Описание: {goal.description}</p>
           )}
+
           {goal.dream && (
             <div className="mt-2 p-2 border rounded">
               <div className="text-sm font-medium">
-                Мечта 🌟: <a href={goal.dream.description}>{goal.dream.title}</a>
+                Мечта 🌟:{' '}
+                <a
+                  href={goal.dream.description}
+                  target="_blank"
+                  className="underline"
+                >
+                  {goal.dream.title}
+                </a>
               </div>
             </div>
           )}
@@ -93,7 +116,7 @@ export function GoalItem({ goal, date }: any) {
           {isFailed && (
             <button
               className="text-yellow-600 text-xs"
-              onClick={() => alert('Обжалование отправлено')}
+              onClick={() => CreateAppeals()}
             >
               обжаловать
             </button>
@@ -119,14 +142,14 @@ export function GoalItem({ goal, date }: any) {
           return (
             <button
               key={slot}
-              disabled={isFuture || isFailed}
+              disabled={!isApproved || isFuture || isFailed}
               onClick={() =>
                 done ? unmark.mutate(slot) : mark.mutate(slot)
               }
               className={`px-3 py-1 border rounded text-sm
                 ${done ? 'bg-green-500 text-white' : ''}
                 ${
-                  isFuture || isFailed
+                  !isApproved || isFuture || isFailed
                     ? 'opacity-40 cursor-not-allowed'
                     : ''
                 }
@@ -139,7 +162,9 @@ export function GoalItem({ goal, date }: any) {
       </div>
 
       {isFailed && (
-        <div className="text-red">Цель провалена ❌</div>
+        <div className="text-red-500 text-sm">
+          Цель провалена ❌
+        </div>
       )}
 
       <div>

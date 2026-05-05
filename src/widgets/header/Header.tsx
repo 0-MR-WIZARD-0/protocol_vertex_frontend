@@ -17,7 +17,7 @@ export function Header() {
   };
 
   return (
-    <div className="h-14 border-b flex items-center justify-between px-6">
+    <div className="h-14 border-b flex items-center justify-between px-6 text-white">
       <h3>Роль: {user?.role}</h3>
 
       <div className="flex items-center gap-4">

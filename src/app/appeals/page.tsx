@@ -1,64 +1,147 @@
-// /* eslint-disable react-hooks/set-state-in-effect */
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-// 'use client';
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
 
-// import { useEffect, useState } from 'react';
-// import { api } from '../../shared/api/axios';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { api } from '../../shared/api/axios';
 
-// export default function AppealsPage() {
-//   const [appeals, setAppeals] = useState<any[]>([]);
-//   const [message, setMessage] = useState('');
-//   const [goalLogId, setGoalLogId] = useState('');
+export default function AppealsPage() {
+  const params = useSearchParams();
 
-//   const load = async () => {
-//     const res = await api.get('/appeals/my');
-//     setAppeals(res.data);
-//   };
+  const goalId = params.get('goalId');
+  const date = params.get('date');
 
-//   const send = async () => {
-//     await api.post('/appeals', {
-//       goalLogId,
-//       message,
-//     });
+  const [data, setData] = useState<any>(null);
+  const [appeals, setAppeals] = useState<any[]>([]);
+  const [selectedSlot, setSelectedSlot] = useState('');
+  const [message, setMessage] = useState('');
 
-//     setMessage('');
-//     load();
-//   };
+  const loadAppeals = async () => {
+    const res = await api.get('/appeals/my');
+    setAppeals(res.data);
+  };
 
-//   useEffect(() => {
-//     load();
-//   }, []);
+  useEffect(() => {
+    if (goalId && date) {
+      api
+        .get(`/goals/${goalId}/day?date=${date}`)
+        .then((res) => setData(res.data));
+    }
 
-//   return (
-//     <div>
-//       <h1 className="text-xl mb-4">Обжалования</h1>
+    loadAppeals();
+  }, [goalId, date]);
 
-//       <div className="bg-white p-4 rounded shadow mb-6">
-//         <input
-//           placeholder="ID лога"
-//           className="border p-2 w-full mb-2"
-//           onChange={(e) => setGoalLogId(e.target.value)}
-//         />
+  const send = async () => {
+    if (!selectedSlot) {
+      alert('Выбери слот');
+      return;
+    }
 
-//         <textarea
-//           placeholder="Сообщение"
-//           className="border p-2 w-full mb-2"
-//           onChange={(e) => setMessage(e.target.value)}
-//         />
+    await api.post('/appeals', {
+      goalId,
+      date,
+      timeSlot: selectedSlot,
+      message,
+    });
 
-//         <button
-//           onClick={send}
-//           className="bg-blue-600 text-white px-4 py-2 rounded"
-//         >
-//           Отправить
-//         </button>
-//       </div>
+    setMessage('');
+    setSelectedSlot('');
 
-//       {appeals.map((a) => (
-//         <div key={a.id} className="border p-2 mb-2">
-//           {a.message} — {a.status}
-//         </div>
-//       ))}
-//     </div>
-//   );
-// }
+    await loadAppeals();
+
+    alert('Отправлено на модерацию');
+  };
+
+  if (!data && goalId) return <div>Загрузка...</div>;
+
+  return (
+    <div className="space-y-6 text-white">
+
+      {goalId && date && (
+        <>
+          <div className="space-y-2">
+            <div className="text-sm text-gray-400">
+              Выбери невыполненный слот:
+            </div>
+
+            <div className="flex gap-2 flex-wrap">
+              {data?.missed?.map((slot: string) => (
+                <button
+                  key={slot}
+                  onClick={() => setSelectedSlot(slot)}
+                  className={`px-3 py-1 border rounded
+                    ${selectedSlot === slot ? 'bg-green-600' : ''}
+                  `}
+                >
+                  {slot}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <textarea
+            placeholder="Опишите причину"
+            className="w-full p-3 border rounded bg-[#0a1121]"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+
+          <button
+            onClick={send}
+            className="bg-green-600 px-4 py-2 rounded"
+          >
+            Отправить
+          </button>
+        </>
+      )}
+
+      <div className="space-y-2">
+        <div className="font-semibold">
+          Заявки на обжалование: {appeals.length}
+        </div>
+
+        {appeals.length === 0 ? (
+          <></>
+        ) : (
+          appeals.map((a) => (
+            <div key={a.id} className="border p-3 rounded">
+              <div className="text-sm">
+                <b>Цель:</b> {a.goal?.title}
+              </div>
+
+              <div className="text-sm">
+                <b>Слот:</b> {a.timeSlot}
+              </div>
+
+              <div className="text-sm">
+                <b>Дата:</b>{' '}
+                {new Date(a.date).toLocaleDateString()}
+              </div>
+
+              <div className="text-sm mt-1">
+                {a.message}
+              </div>
+
+              <div className="text-xs mt-2">
+                Статус:{' '}
+                <span
+                  className={
+                    a.status === 'PENDING'
+                      ? 'text-yellow-400'
+                      : a.status === 'APPROVED'
+                      ? 'text-green-400'
+                      : 'text-red-400'
+                  }
+                >
+                  {a.status}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+    </div>
+  );
+}

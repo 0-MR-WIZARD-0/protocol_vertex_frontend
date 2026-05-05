@@ -34,8 +34,8 @@ export function Sidebar() {
 
       <div className="space-y-2">
         {item('/dashboard', 'Главная')}
- {/* {item('/analytics', 'Аналитика')}
-   {item('/appeals', 'Обжалования')} */}
+ {/* {item('/analytics', 'Аналитика')} */}
+        {item('/appeals', 'Обжалования')} 
         {user?.role === 'ADMIN' && item('/admin', 'Админ панель')}
       </div>
     </div>

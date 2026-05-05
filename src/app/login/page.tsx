@@ -47,7 +47,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center">
+    <div className="h-screen flex items-center justify-center text-white">
       <div className="p-6 bg-white rounded-2xl shadow w-80 space-y-4">
 
         <div className="flex border rounded-lg overflow-hidden text-black">

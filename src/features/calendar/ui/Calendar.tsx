@@ -10,6 +10,7 @@ type DayData = {
   done: number;
   percent: number;
   hasTasks?: boolean;
+  hasGoals?: boolean;
 };
 
 export function Calendar({
@@ -43,7 +44,7 @@ export function Calendar({
 
     let icon = null;
 
-    if (day?.total > 0) {
+    if (day?.hasGoals) {
       if (day.done === day.total) icon = '✅';
       else if (key < today) icon = '❌';
       else icon = '🎯';
@@ -57,7 +58,7 @@ export function Calendar({
       <div
         key={key}
         onClick={() => onSelect(key)}
-        className={`h-24 p-2 rounded-xl border cursor-pointer flex flex-col justify-between
+        className={`h-24 p-2 rounded-xl border text-white cursor-pointer flex flex-col justify-between
           ${isSelected ? 'bg-white border-green-600' : 'bg-[#0a1121]'}
           ${isToday ? 'ring-2 ring-blue-400' : ''}
           hover:shadow-sm transition
@@ -99,18 +100,18 @@ export function Calendar({
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => onMonthChange(currentMonth.subtract(1, 'month'))}
-          className="px-3 py-1 rounded border"
+          className="px-3 py-1 rounded border text-white"
         >
           ←
         </button>
 
-        <div className="font-bold text-lg">
+        <div className="font-bold text-white">
           {currentMonth.format('MMMM YYYY')}
         </div>
 
         <button
           onClick={() => onMonthChange(currentMonth.add(1, 'month'))}
-          className="px-3 py-1 rounded border"
+          className="px-3 py-1 rounded border text-white"
         >
           →
         </button>

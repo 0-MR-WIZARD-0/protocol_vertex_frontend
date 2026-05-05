@@ -52,7 +52,7 @@ export default function Dashboard() {
       />
 
       {dayLoading ? (
-        <div>Loading day...</div>
+        <div className="text-white text-sm">Loading day...</div>
       ) : (
         <DayDetails data={dayData} date={selected} />
       )}

@@ -4,12 +4,20 @@
 import { useState } from 'react';
 import { GoalItem } from '../ui/GoalItem';
 import { TaskItem } from '../ui/TaskItem';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/src/shared/api/axios';
 
 export function DayDetails({ data, date }: any) {
   const [tab, setTab] = useState<'goals' | 'tasks'>('goals');
+  
+  const { data: pendingCount } = useQuery({
+    queryKey: ['pending-goals'],
+    queryFn: () =>
+      api.get('/goals/pending-count').then((r) => r.data),
+  });
 
   if (!data) {
-    return <div className="text-gray-400 text-sm">Загрузка...</div>;
+    return <div className="text-white text-sm">Загрузка...</div>;
   }
 
   const goals = data.goals || [];
@@ -48,6 +56,12 @@ export function DayDetails({ data, date }: any) {
         {renderTab('goals', 'Цели')}
         {renderTab('tasks', 'Задачи')}
       </div>
+
+      {pendingCount > 0 && (
+        <div className="text-white text-sm">
+          Целей на модерации: {pendingCount}
+        </div>
+      )}
 
       {tab === 'goals' && (
         goals.length ? (

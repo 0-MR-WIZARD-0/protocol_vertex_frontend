@@ -37,7 +37,7 @@ export function TaskItem({ task, date }: any) {
   });
 
   return (
-    <div className="border p-3 rounded-xl shadow flex justify-between items-center">
+    <div className="border p-3 rounded-xl shadow flex justify-between items-center text-white">
 
       <div className="flex items-center gap-3">
         <button

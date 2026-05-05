@@ -14,11 +14,10 @@ export function ActionTabs() {
       <button
         onClick={() => setOpen(type)}
         className={`
-          px-4 py-2 rounded-lg border transition
-
+          px-4 py-2 rounded-lg border-gray-700 transition
           ${isActive
             ? 'bg-green-600 text-white border-green-600'
-            : 'text-white border hover:bg-green-500 hover:text-black'
+            : 'text-white border hover:bg-green-600 hover:text-white'
           }
         `}
       >
@@ -32,7 +31,7 @@ export function ActionTabs() {
       <div className="flex gap-3 mb-6">
         {tab('goal', 'Создать цель')}
         {tab('task', 'Создать задачу')}
-        {tab('reminder', 'Создать напоминание')}
+        {/* {tab('reminder', 'Создать напоминание')} */}
       </div>
 
       {open === 'goal' && (
