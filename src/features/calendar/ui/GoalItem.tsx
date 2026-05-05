@@ -123,6 +123,15 @@ export function GoalItem({ goal, date }: any) {
           )}
 
           <button
+            onClick={() =>
+              router.push(`/notifications?goalId=${goal.id}`)
+            }
+            className="text-blue-400 text-xs"
+          >
+            🔔
+          </button>
+
+          <button
             onClick={() => {
               const password = prompt('Введите пароль');
               if (!password) return;
