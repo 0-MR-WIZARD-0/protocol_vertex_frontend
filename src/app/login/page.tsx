@@ -35,11 +35,7 @@ export default function LoginPage() {
   const handleRegister = async () => {
     try {
       setError('');
-      await api.post('/auth/register', {
-        email,
-        password,
-      });
-
+      await api.post('/auth/register', { email, password });
       await handleLogin();
     } catch (e: any) {
       setError(e?.response?.data?.message || 'Ошибка регистрации');
@@ -47,8 +43,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center text-white">
-      <div className="p-6 bg-white rounded-2xl shadow w-80 space-y-4">
+    <div className="min-h-screen flex items-center justify-center px-4 text-white">
+      
+      <div className="w-full max-w-sm p-5 sm:p-6 bg-white rounded-2xl shadow space-y-4">
 
         <div className="flex border rounded-lg overflow-hidden text-black">
           <button
@@ -75,14 +72,14 @@ export default function LoginPage() {
         </div>
 
         <input
-          className="w-full p-2 border rounded text-black"
+          className="w-full p-2 border rounded text-black text-sm sm:text-base"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <input
-          className="w-full p-2 border rounded text-black"
+          className="w-full p-2 border rounded text-black text-sm sm:text-base"
           type="password"
           placeholder="Пароль"
           value={password}
@@ -97,7 +94,7 @@ export default function LoginPage() {
 
         <button
           onClick={tab === 'login' ? handleLogin : handleRegister}
-          className="w-full bg-green-600 p-2 rounded hover:opacity-90"
+          className="w-full bg-green-600 p-2 rounded hover:opacity-90 text-sm sm:text-base"
         >
           {tab === 'login' ? 'Войти' : 'Зарегистрироваться'}
         </button>
