@@ -17,15 +17,24 @@ export function Header() {
   };
 
   return (
-    <div className="h-14 border-b flex items-center justify-between px-6 text-white">
-      <h3>Роль: {user?.role}</h3>
+    <div className="
+      h-14 border-b 
+      flex items-center justify-between 
+      px-3 sm:px-6 
+      text-white text-sm sm:text-base
+    ">
+      <h3 className="truncate">
+        Роль: {user?.role}
+      </h3>
 
-      <div className="flex items-center gap-4">
-        <p className="text-sm">{user?.email}</p>
+      <div className="flex items-center gap-2 sm:gap-4">
+        <p className="hidden sm:block text-sm">
+          {user?.email}
+        </p>
 
         <button
           onClick={handleLogout}
-          className="text-sm text-red-500 hover:underline"
+          className="text-xs sm:text-sm text-red-500"
         >
           Выйти
         </button>

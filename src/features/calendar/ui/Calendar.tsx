@@ -34,7 +34,6 @@ export function Calendar({
   const days = [];
   let current = start;
 
-
   while (current.isBefore(end) || current.isSame(end)) {
     const key = current.format('YYYY-MM-DD');
     const day = data?.[key];
@@ -58,13 +57,12 @@ export function Calendar({
       <div
         key={key}
         onClick={() => onSelect(key)}
-        className={`h-24 p-2 rounded-xl border text-white cursor-pointer flex flex-col justify-between
+        className={`h-20 sm:h-24 p-1 sm:p-2 rounded-xl border text-white cursor-pointer flex flex-col justify-between
           ${isSelected ? 'bg-white border-green-600' : 'bg-[#0a1121]'}
           ${isToday ? 'ring-2 ring-blue-400' : ''}
-          hover:shadow-sm transition
         `}
       >
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center text-xs sm:text-sm">
           <span
             className={`font-bold ${
               isSelected ? 'text-black' : 'text-white'
@@ -76,7 +74,7 @@ export function Calendar({
         </div>
 
         {day?.total > 0 && (
-          <div className="mt-2">
+          <div className="mt-1">
             <div
               className={`h-1 rounded ${
                 isSelected ? 'bg-black' : 'bg-white'
@@ -96,28 +94,30 @@ export function Calendar({
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
+    <div className="px-2 sm:px-0">
+      <div className="flex items-center justify-between mb-3 sm:mb-4 text-sm sm:text-base">
         <button
           onClick={() => onMonthChange(currentMonth.subtract(1, 'month'))}
-          className="px-3 py-1 rounded border text-white"
+          className="px-2 py-1 sm:px-3 rounded border text-white"
         >
           ←
         </button>
 
-        <div className="font-bold text-white">
+        <div className="font-bold text-white text-sm sm:text-lg">
           {currentMonth.format('MMMM YYYY')}
         </div>
 
         <button
           onClick={() => onMonthChange(currentMonth.add(1, 'month'))}
-          className="px-3 py-1 rounded border text-white"
+          className="px-2 py-1 sm:px-3 rounded border text-white"
         >
           →
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-3">{days}</div>
+      <div className="grid grid-cols-7 gap-1 sm:gap-3">
+        {days}
+      </div>
     </div>
   );
 }

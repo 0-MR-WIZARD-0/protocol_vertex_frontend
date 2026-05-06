@@ -9,7 +9,7 @@ import { api } from '@/src/shared/api/axios';
 
 export function DayDetails({ data, date }: any) {
   const [tab, setTab] = useState<'goals' | 'tasks'>('goals');
-  
+
   const { data: pendingCount } = useQuery({
     queryKey: ['pending-goals'],
     queryFn: () =>
@@ -30,13 +30,10 @@ export function DayDetails({ data, date }: any) {
       <button
         onClick={() => setTab(type)}
         className={`
-          px-4 py-2 rounded-lg border transition
-
-          ${
-            isActive
-              ? 'bg-green-600 text-white border-green-600'
-              : 'text-white border-gray-600 hover:bg-green-600'
-          }
+          px-3 sm:px-4 py-2 rounded-lg border text-sm sm:text-base
+          ${isActive
+            ? 'bg-green-600 text-white border-green-600'
+            : 'text-white border-gray-600'}
         `}
       >
         {label}
@@ -50,15 +47,15 @@ export function DayDetails({ data, date }: any) {
       : 'Задачи на день отсутствуют';
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-2 sm:px-0">
 
-      <div className="flex justify-center gap-3">
+      <div className="flex justify-center gap-2 sm:gap-3 flex-wrap">
         {renderTab('goals', 'Цели')}
         {renderTab('tasks', 'Задачи')}
       </div>
 
       {pendingCount > 0 && (
-        <div className="text-white text-sm">
+        <div className="text-white text-xs sm:text-sm text-center">
           Целей на модерации: {pendingCount}
         </div>
       )}
@@ -86,7 +83,6 @@ export function DayDetails({ data, date }: any) {
           </div>
         )
       )}
-
     </div>
   );
 }
