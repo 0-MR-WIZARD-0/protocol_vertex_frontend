@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Analytics App",
-  description: "Goal tracking system",
+  title: "Vertex",
+  description: "Tracking system",
 };
 
 export default function RootLayout({
