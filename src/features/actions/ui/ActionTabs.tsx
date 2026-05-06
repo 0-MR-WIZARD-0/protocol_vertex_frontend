@@ -31,7 +31,6 @@ export function ActionTabs() {
       <div className="flex gap-3 mb-6">
         {tab('goal', 'Создать цель')}
         {tab('task', 'Создать задачу')}
-        {/* {tab('reminder', 'Создать напоминание')} */}
       </div>
 
       {open === 'goal' && (
