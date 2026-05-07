@@ -6,6 +6,7 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../shared/api/axios';
 import { useSearchParams } from 'next/navigation';
+import { TelegramConnect } from '@/src/features/telegram/TelegramConnect';
 
 export default function NotificationsPage() {
   const params = useSearchParams();
@@ -105,7 +106,10 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-6 text-white max-w-xl mx-auto">
 
-      <h1 className="text-xl font-bold">Уведомления 🔔</h1>
+      <div className="flex items-center justify-between gap-2">
+        <h1 className="text-xl font-bold">Уведомления 🔔</h1>
+        <TelegramConnect/>
+      </div>
 
       <select
         value={goalId}

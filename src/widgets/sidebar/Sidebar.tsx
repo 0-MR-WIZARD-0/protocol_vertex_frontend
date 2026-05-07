@@ -44,7 +44,7 @@ export function Sidebar() {
       ">
         {item('/dashboard', 'Главная')}
         {item('/appeals', 'Обжалования')}
-        {user?.role === 'ADMIN' && item('/admin', 'Админ')}
+        {user?.role === 'ADMIN' && item('/admin', 'Панель управления')}
       </div>
     </div>
   );
