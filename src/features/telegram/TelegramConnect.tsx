@@ -1,14 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import { api } from '../../shared/api/axios';
+import { useAuthStore } from '../../shared/store/useAuthStore';
 
 export function TelegramConnect() {
+  const user = useAuthStore((s) => s.user);
+  const setUser = useAuthStore((s) => s.setUser);
+
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const isConnected = !!user?.telegramId;
 
   const connect = async () => {
     try {
+      setLoading(true);
+
       const res = await api.post(
         '/users/telegram-code',
       );
@@ -17,16 +27,86 @@ export function TelegramConnect() {
       setOpen(true);
     } catch {
       alert('Ошибка подключения');
+    } finally {
+      setLoading(false);
     }
   };
+
+  const disconnect = async () => {
+    const confirmDisconnect = confirm(
+      'Отвязать Telegram?',
+    );
+
+    if (!confirmDisconnect) return;
+
+    try {
+      setLoading(true);
+
+      await api.delete('/users/telegram');
+
+      setUser({
+        ...user!,
+        telegramId: null,
+      });
+
+      alert('Telegram отвязан');
+    } catch {
+      alert('Ошибка отвязки');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!open) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const res = await api.get('/auth/me');
+
+        if (res.data?.telegramId) {
+          setUser(res.data);
+
+          setOpen(false);
+
+          clearInterval(interval);
+        }
+      } catch {
+        //
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [open, setUser]);
 
   return (
     <>
       <button
-        onClick={connect}
-        className="px-4 py-2 rounded bg-blue-600 text-white hover:opacity-90 transition"
+        disabled={loading}
+        onClick={
+          isConnected
+            ? disconnect
+            : connect
+        }
+        className={`
+          px-4 py-2 rounded text-white transition
+
+          ${
+            isConnected
+              ? 'bg-red-600 hover:bg-red-700'
+              : 'bg-blue-600 hover:bg-blue-700'
+          }
+
+          ${
+            loading
+              ? 'opacity-50 cursor-not-allowed'
+              : ''
+          }
+        `}
       >
-        Подключить Telegram
+        {isConnected
+          ? 'Отвязать Telegram'
+          : 'Подключить Telegram'}
       </button>
 
       {open && (
@@ -53,6 +133,10 @@ export function TelegramConnect() {
 
               <div className="bg-black/40 border border-gray-700 rounded-xl p-4 text-center font-mono text-green-400 break-all">
                 /start {code}
+              </div>
+
+              <div className="text-center text-xs text-gray-400">
+                Ожидаем подтверждение...
               </div>
 
               <p className="text-gray-400 text-xs leading-relaxed">
