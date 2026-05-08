@@ -2,13 +2,19 @@
 'use client';
 
 import { useState } from 'react';
+
 import { api } from '../../../shared/api/axios';
+
 import { useQueryClient } from '@tanstack/react-query';
 
-export function CreateTaskModal({ onClose }: any) {
+export function CreateTaskModal({
+  onClose,
+}: any) {
   const qc = useQueryClient();
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date()
+    .toISOString()
+    .slice(0, 10);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -30,8 +36,13 @@ export function CreateTaskModal({ onClose }: any) {
         date,
       });
 
-      qc.invalidateQueries({ queryKey: ['day'] });
-      qc.invalidateQueries({ queryKey: ['month'] });
+      qc.invalidateQueries({
+        queryKey: ['day'],
+      });
+
+      qc.invalidateQueries({
+        queryKey: ['month'],
+      });
 
       onClose();
     } catch {
@@ -42,37 +53,153 @@ export function CreateTaskModal({ onClose }: any) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-xl w-[400px] space-y-4 text-black">
-        <h2>Создать задачу</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
 
-        <input
-          className="w-full border p-2 rounded"
-          placeholder="Название"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+      <div
+        className="
+          hide-scrollbar
+          relative
+          w-full
+          max-w-lg
+          rounded-2xl
+          border
+          border-gray-700
+          bg-[#0a1121]
+          p-6
+          text-white
+          shadow-2xl
+          max-h-[90vh]
+          overflow-y-auto
+          [scrollbar-width:none]
+          [-ms-overflow-style:none]
+        "
+      >
 
-        <textarea
-          className="w-full border p-2 rounded"
-          placeholder="Описание"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+        <button
+          onClick={onClose}
+          className="absolute right-3 top-3 text-xl text-gray-400 transition hover:text-white"
+        >
+          ✕
+        </button>
 
-        <input
-          type="date"
-          min={today}
-          className="w-full border p-2 rounded"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+        <h2 className="mb-6 text-2xl font-bold">
+          Создать задачу 📝
+        </h2>
 
-        <div className="flex justify-end gap-2">
-          <button onClick={onClose}>Отмена</button>
-          <button onClick={create} disabled={loading}>
-            Создать
-          </button>
+        <div className="space-y-4">
+
+          <input
+            placeholder="Название задачи"
+            value={title}
+            onChange={(e) =>
+              setTitle(
+                e.target.value,
+              )
+            }
+            className="
+              w-full
+              rounded-xl
+              border
+              border-gray-700
+              bg-black/40
+              p-3
+              text-white
+              outline-none
+              focus:border-blue-500
+            "
+          />
+
+          <textarea
+            placeholder="Описание (необязательно)"
+            value={description}
+            onChange={(e) =>
+              setDescription(
+                e.target.value,
+              )
+            }
+            className="
+              min-h-[120px]
+              w-full
+              rounded-xl
+              border
+              border-gray-700
+              bg-black/40
+              p-3
+              text-white
+              outline-none
+              focus:border-blue-500
+            "
+          />
+
+          <div>
+
+            <div className="mb-2 text-sm text-gray-400">
+              Дата выполнения
+            </div>
+
+            <input
+              type="date"
+              min={today}
+              value={date}
+              onChange={(e) =>
+                setDate(
+                  e.target.value,
+                )
+              }
+              className="
+                w-full
+                rounded-xl
+                border
+                border-gray-700
+                bg-black/40
+                p-3
+                text-white
+                outline-none
+                focus:border-blue-500
+                [color-scheme:dark]
+              "
+            />
+
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+
+            <button
+              onClick={onClose}
+              className="
+                rounded-xl
+                border
+                border-gray-700
+                px-5
+                py-3
+                transition
+                hover:bg-white/10
+              "
+            >
+              Отмена
+            </button>
+
+            <button
+              onClick={create}
+              disabled={loading}
+              className="
+                rounded-xl
+                bg-green-600
+                px-5
+                py-3
+                font-medium
+                transition
+                hover:bg-green-700
+                disabled:opacity-50
+              "
+            >
+              {loading
+                ? 'Создание...'
+                : 'Создать задачу'}
+            </button>
+
+          </div>
+
         </div>
       </div>
     </div>

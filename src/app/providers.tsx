@@ -7,8 +7,6 @@ const client = new QueryClient();
 
 export function Providers({ children }: any) {
   return (
-    <QueryClientProvider client={client}>
-      {children}
-    </QueryClientProvider>
+    <QueryClientProvider client={client}>{children}</QueryClientProvider>
   );
 }

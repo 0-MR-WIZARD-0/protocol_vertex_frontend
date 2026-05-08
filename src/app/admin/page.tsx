@@ -1,18 +1,33 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import { api } from '../../shared/api/axios';
+import type {Goal, GoalLog} from '../../types/goal.types';
+import type { User } from '../../types/user.types';
+
+interface ModerationGoal
+  extends Goal {
+  user?: User;
+}
+
+interface ModerationLog
+  extends GoalLog {
+  goal: Goal & {
+    user?: User;
+  };
+}
 
 export default function AdminPage() {
-  const [goals, setGoals] = useState<any[]>([]);
-  const [logs, setLogs] = useState<any[]>([]);
+  const [goals, setGoals] = useState<ModerationGoal[]>([]);
+  const [logs, setLogs] = useState<ModerationLog[]>([]);
 
   const load = async () => {
-    const g = await api.get('/moderation/goals');
-    const l = await api.get('/moderation/logs');
-
+    const [g, l] =
+      await Promise.all([
+        api.get<ModerationGoal[]>('/moderation/goals'),
+        api.get<ModerationLog[]>('/moderation/logs'),
+      ]);
     setGoals(g.data);
     setLogs(l.data);
   };
@@ -27,46 +42,57 @@ export default function AdminPage() {
   }, []);
 
   const getSlotLabel = (slot: string) => {
-    if (slot === 'morning') return 'Утро ☀️';
-    if (slot === 'day') return 'День 🌤️';
-    if (slot === 'evening') return 'Вечер 🌙';
+    if (slot === 'morning') {
+      return 'Утро ☀️';
+    }
+    if (slot === 'day') {
+      return 'День 🌤️';
+    }
+    if (slot === 'evening') {
+      return 'Вечер 🌙';
+    }
     return slot;
   };
 
   return (
     <div className="space-y-6 text-white">
       <div>
-        <h2 className="font-bold mb-3">Заявки на модерацию:</h2>
+        <h2 className="mb-3 font-bold">Заявки на модерацию:</h2>
         {goals.map((g) => (
-          <div key={g.id} className="border p-3 mb-3 rounded">
-            <p className="font-medium mt-1">Email: {g.user?.email}</p>
-            <p className="font-medium mt-1">Цель: {g.title}</p>
+          <div
+            key={g.id}
+            className="mb-3 rounded border p-3"
+          >
+            <p className="mt-1 font-medium">
+              Email:{' '}
+              {g.user?.email}
+            </p>
+            <p className="mt-1 font-medium">
+              Цель: {g.title}
+            </p>
             {g.dream && (
-              <div className="font-medium mt-1">
+              <div className="mt-1 font-medium">
                 {g.dream.description && (
                   <a
                     href={g.dream.description}
                     target="_blank"
                     className="underline"
                   >
-                    Мечта: {g.dream.title}
+                    Мечта:{' '}
+                    {g.dream.title}
                   </a>
                 )}
               </div>
             )}
-            <div className="flex gap-3 mt-3">
+            <div className="mt-3 flex gap-3">
               <button
-                onClick={() =>
-                  action(`/moderation/goals/${g.id}/approve`)
-                }
+                onClick={() => action(`/moderation/goals/${g.id}/approve`)}
                 className="font-medium text-green-600"
               >
                 Принять
               </button>
               <button
-                onClick={() =>
-                  action(`/moderation/goals/${g.id}/reject`)
-                }
+                onClick={() => action(`/moderation/goals/${g.id}/reject`)}
                 className="font-medium text-red-600"
               >
                 Отклонить
@@ -76,31 +102,33 @@ export default function AdminPage() {
         ))}
       </div>
       <div>
-        <h2 className="font-bold mb-3">Логи:</h2>
+        <h2 className="mb-3 font-bold">Логи:</h2>
         {logs.map((l) => (
-          <div key={l.id} className="border p-3 mb-2 rounded">
-            <div className="font-medium mt-1">
-                Email: {l.goal.user?.email}
+          <div
+            key={l.id}
+            className="mb-2 rounded border p-3"
+          >
+            <div className="mt-1 font-medium">
+              Email:{' '}
+              {l.goal.user?.email}
             </div>
-            <div className="font-medium mt-1">
-              Цель: {l.goal.title}
+            <div className="mt-1 font-medium">
+              Цель:{' '}
+              {l.goal.title}
             </div>
-            <div className="font-medium mt-1">
-              Действие: {getSlotLabel(l.timeSlot)}
+            <div className="mt-1 font-medium">
+              Действие:{' '}
+              {getSlotLabel(l.timeSlot)}
             </div>
-            <div className="flex gap-3 mt-3">
+            <div className="mt-3 flex gap-3">
               <button
-                onClick={() =>
-                  action(`/moderation/logs/${l.id}/approve`)
-                }
+                onClick={() => action(`/moderation/logs/${l.id}/approve`)}
                 className="font-medium text-green-600"
               >
                 Выполнено
               </button>
               <button
-                onClick={() =>
-                  action(`/moderation/logs/${l.id}/reject`)
-                }
+                onClick={() => action(`/moderation/logs/${l.id}/reject`)}
                 className="font-medium text-red-600"
               >
                 Не выполнено
