@@ -74,7 +74,7 @@ export default function Dashboard() {
         currentMonth={currentMonth}
         onMonthChange={setCurrentMonth}
       />
-      {dayLoading ? (
+      {dayLoading || !dayData ? (
         <div className="text-sm text-white">Loading day...</div>
       ) : (
         <DayDetails

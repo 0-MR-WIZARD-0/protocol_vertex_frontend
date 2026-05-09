@@ -42,22 +42,16 @@ export default function AdminPage() {
   }, []);
 
   const getSlotLabel = (slot: string) => {
-    if (slot === 'morning') {
-      return 'Утро ☀️';
-    }
-    if (slot === 'day') {
-      return 'День 🌤️';
-    }
-    if (slot === 'evening') {
-      return 'Вечер 🌙';
-    }
+    if (slot === 'morning') return 'Утро ☀️';
+    if (slot === 'day') return 'День 🌤️';
+    if (slot === 'evening') return 'Вечер 🌙';
     return slot;
   };
 
   return (
     <div className="space-y-6 text-white">
       <div>
-        <h2 className="mb-3 font-bold">Заявки на модерацию:</h2>
+        <h2 className="mb-3 text-sm">Заявки на модерацию:</h2>
         {goals.map((g) => (
           <div
             key={g.id}
@@ -102,7 +96,7 @@ export default function AdminPage() {
         ))}
       </div>
       <div>
-        <h2 className="mb-3 font-bold">Логи:</h2>
+        <h2 className="mb-3 text-sm">Логи:</h2>
         {logs.map((l) => (
           <div
             key={l.id}

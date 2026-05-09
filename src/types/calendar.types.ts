@@ -7,6 +7,8 @@ export interface DayData {
   percent: number;
   goals?: Goal[];
   tasks?: Task[];
+  hasTasks?: boolean;
+  hasGoals?: boolean;
 }
 
 export interface CalendarMonthResponse {

@@ -28,7 +28,7 @@ export function ActionTabs() {
 
   return (
     <>
-      <div className="flex gap-3 mb-6">
+      <div className="flex gap-3 mb-3 mt-3 text-sm">
         {tab('goal', 'Создать цель')}
         {tab('task', 'Создать задачу')}
       </div>

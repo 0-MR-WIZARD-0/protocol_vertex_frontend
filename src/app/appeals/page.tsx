@@ -141,7 +141,7 @@ export default function AppealsPage() {
         </>
       )}
       <div className="space-y-2">
-        <div className="font-semibold">
+        <div className="text-sm">
           Заявки на обжалование:{' '}
           {appeals.length}
         </div>
@@ -152,10 +152,7 @@ export default function AppealsPage() {
             >
               <div className="text-sm">
                 <b>Цель:</b>{' '}
-                {
-                  a.goal
-                    ?.title
-                }
+                {a.goal?.title}
               </div>
               <div className="text-sm">
                 <b>Слот:</b>{' '}
@@ -163,9 +160,7 @@ export default function AppealsPage() {
               </div>
               <div className="text-sm">
                 <b>Дата:</b>{' '}
-                {new Date(
-                  a.date,
-                ).toLocaleDateString()}
+                {new Date(a.date).toLocaleDateString()}
               </div>
               <div className="mt-1 text-sm">
                 {a.message}
@@ -186,17 +181,10 @@ export default function AppealsPage() {
                   {a.status}
                 </span>
               </div>
-              {user?.role ===
-                'ADMIN' &&
-                a.status ===
-                  'PENDING' && (
+              {user?.role === 'ADMIN' && a.status === 'PENDING' && (
                   <div className="mt-3 flex gap-2">
                     <button
-                      onClick={() =>
-                        approve(
-                          a.id,
-                        )
-                      }
+                      onClick={() => approve(a.id)}
                       className="
                         rounded-lg
                         bg-green-600
@@ -210,11 +198,7 @@ export default function AppealsPage() {
                       Принять
                     </button>
                     <button
-                      onClick={() =>
-                        reject(
-                          a.id,
-                        )
-                      }
+                      onClick={() => reject(a.id)}
                       className="
                         rounded-lg
                         bg-red-600

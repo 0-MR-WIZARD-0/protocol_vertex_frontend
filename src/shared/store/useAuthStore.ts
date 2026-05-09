@@ -1,11 +1,5 @@
+import { User } from '@/src/types/user.types';
 import { create } from 'zustand';
-
-interface User {
-  id: string;
-  email: string;
-  role: string;
-  telegramId: string | null;
-}
 
 interface AuthState {
   user: User | null;

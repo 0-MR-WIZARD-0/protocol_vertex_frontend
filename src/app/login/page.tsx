@@ -5,11 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
 import { api } from '../../shared/api/axios';
 import { useAuthStore } from '../../shared/store/useAuthStore';
-import type {
-  AuthResponse,
-  LoginDto,
-  RegisterDto,
-} from '../../types/auth.types';
+import type {AuthResponse, LoginDto, RegisterDto} from '../../types/auth.types';
 import type { ApiError } from '../../types/api.types';
 
 export default function LoginPage() {
